@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/list.css"/>
+	</head>
+	<body>
+		<header>
+			<div class="message"  onclick="history.back()"><img src="images/list/pic_list_back.jpg"/></div>
+			<div class="search">
+				<input type="text" value="请输入商品、商家、服务" />
+			</div>
+			<div class="sys">
+			
+				<img src="images/list/pic_list_list.jpg"/>
+			</div>
+		</header>
+		
+		<div class="btns">
+			<a href="#" class="active">综合</a>
+			<a href="#">销量</a>
+			<a href="#" class="icon">价格</a>
+			<a href="#" class="icon">筛选</a>
+		</div>
+		
+		<div id="box">
+			<div v-if="isShow">你要找的商品不存在~</div>
+			<main v-else>
+				
+				<div v-for="item in ary">
+					<div>
+							<img :src="item.img" v-on:click="jump(item.id)" />
+					</div>
+					<p>{{item.title}}</p>
+					<em>￥{{item.price}}.00 <span>3期免息</span></em>
+					<span>{{item.pay}}付款/{{item.msg}}评价</span>
+				</div>
+			</main>
+		</div>
+		<script src="js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="vue/dist/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="axios/dist/axios.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+			var codeStr = decodeURI(location.search.split("=")[1]); //苹果
+			console.log(typeof codeStr)
+			
+			var app = new Vue({
+				el:"#box",
+				data:{
+					isShow:true,
+					ary:[]
+				},
+				created(){
+					
+					if(codeStr != "undefined"){
+						
+						axios.get("/list/"+codeStr).then((res)=>{
+							console.log(res)
+							if(res.data.length != 0){
+								this.isShow = false;
+								this.ary = res.data
+							}
+						})
+					}
+				},
+				methods:{
+					jump(id){
+						location = "detail.html?id="+id;
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
